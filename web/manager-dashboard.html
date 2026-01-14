@@ -1,0 +1,387 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Manager Dashboard - SYOS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-gray-100 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-lg mb-8">
+        <div class="container mx-auto px-4 py-6 flex justify-between items-center">
+            <h2 class="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                👔 Manager Dashboard
+            </h2>
+            <div class="flex items-center space-x-4">
+                <span class="text-gray-600 text-sm">Welcome, Manager</span>
+                <form method="post" action="/synex/logout" style="display: inline;">
+                    <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition duration-200">
+                        Logout
+                    </button>
+                </form>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mx-auto px-4 max-w-7xl">
+
+        <!-- Quick Actions Grid -->
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- Item Management -->
+            <div class="bg-white rounded-2xl shadow-xl p-6 hover:shadow-2xl transition duration-300">
+                <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                    <span class="text-2xl">📦</span>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">Item Management</h3>
+                <p class="text-gray-600 text-sm mb-4">Add, edit, and manage inventory items</p>
+                <a href="/synex/manager/items" class="block w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 text-center font-semibold">
+                    Manage Items
+                </a>
+            </div>
+
+            <!-- Stock Transfer -->
+            <div class="bg-white rounded-2xl shadow-xl p-6 hover:shadow-2xl transition duration-300">
+                <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                    <span class="text-2xl">🔄</span>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">Stock Transfer</h3>
+                <p class="text-gray-600 text-sm mb-4">Transfer stock from shelf to web</p>
+                <a href="/synex/manager/stock/transfer" class="block w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 text-center font-semibold">
+                    Transfer Stock
+                </a>
+            </div>
+
+            <!-- Reports -->
+            <div class="bg-white rounded-2xl shadow-xl p-6 hover:shadow-2xl transition duration-300">
+                <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-4">
+                    <span class="text-2xl">📊</span>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">Reports</h3>
+                <p class="text-gray-600 text-sm mb-4">Sales, stock, and business reports</p>
+                <a href="/synex/manager/reports" class="block w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 text-center font-semibold">
+                    View Reports
+                </a>
+            </div>
+
+            <!-- Register Cashier -->
+            <div class="bg-white rounded-2xl shadow-xl p-6 hover:shadow-2xl transition duration-300">
+                <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mb-4">
+                    <span class="text-2xl">👥</span>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">Staff Management</h3>
+                <p class="text-gray-600 text-sm mb-4">Register cashiers and view staff</p>
+                <button onclick="showStaffSection()" class="block w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 text-center font-semibold">
+                    Manage Staff
+                </button>
+            </div>
+        </div>
+
+        <!-- Staff Management Section (Initially Hidden) -->
+        <div id="staffSection" class="grid md:grid-cols-2 gap-8 mb-8" style="display: none;">
+            <!-- Register Cashier Section -->
+            <div class="bg-white rounded-2xl shadow-xl p-8">
+                <div class="flex items-center mb-6">
+                    <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mr-4">
+                        <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800">Register New Cashier</h3>
+                </div>
+
+                <form method="post" action="/synex/manager/register-cashier" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Username</label>
+                        <input type="text" name="username" required
+                               class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200 outline-none">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                        <input type="password" name="password" required
+                               class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200 outline-none">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                        <input type="email" name="email"
+                               class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200 outline-none">
+                    </div>
+
+                    <button type="submit"
+                            class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold py-3 rounded-lg hover:from-indigo-700 hover:to-purple-700 transform hover:scale-[1.02] transition duration-200 shadow-lg">
+                        Create Cashier
+                    </button>
+                </form>
+            </div>
+
+            <!-- Staff List Section -->
+            <div class="bg-white rounded-2xl shadow-xl p-8">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-4">
+                            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-800">Live Staff List</h3>
+                    </div>
+                    <span id="staffCount" class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-semibold">0</span>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50">
+                            <tr class="text-left text-sm font-medium text-gray-500 uppercase">
+                                <th class="px-4 py-3">ID</th>
+                                <th class="px-4 py-3">Username</th>
+                                <th class="px-4 py-3">Role</th>
+                                <th class="px-4 py-3">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="staffTableBody" class="divide-y divide-gray-200">
+                            <tr>
+                                <td colspan="4" class="px-4 py-8 text-center text-gray-500">Loading staff data...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-xs text-gray-500 mt-2">Last updated: <span id="staffTimestamp">-</span></p>
+            </div>
+        </div>
+
+        <!-- Real-Time Queue Status -->
+        <div class="bg-white rounded-2xl shadow-xl p-6 mb-8">
+            <h3 class="text-2xl font-bold text-gray-800 mb-6">⚙️ Checkout Queue Status</h3>
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <p class="text-sm text-gray-600">Active Threads</p>
+                    <p id="activeThreads" class="text-2xl font-bold text-blue-600">-</p>
+                </div>
+                <div class="bg-purple-50 p-4 rounded-lg">
+                    <p class="text-sm text-gray-600">Queue Size</p>
+                    <p id="queueSize" class="text-2xl font-bold text-purple-600">-</p>
+                </div>
+                <div class="bg-green-50 p-4 rounded-lg">
+                    <p class="text-sm text-gray-600">Pool Size</p>
+                    <p id="poolSize" class="text-2xl font-bold text-green-600">-</p>
+                </div>
+                <div class="bg-orange-50 p-4 rounded-lg">
+                    <p class="text-sm text-gray-600">Core Pool</p>
+                    <p id="corePoolSize" class="text-2xl font-bold text-orange-600">4</p>
+                </div>
+                <div class="bg-red-50 p-4 rounded-lg">
+                    <p class="text-sm text-gray-600">Max Pool</p>
+                    <p id="maxPoolSize" class="text-2xl font-bold text-red-600">4</p>
+                </div>
+            </div>
+            <p class="text-xs text-gray-500 mt-2">Last updated: <span id="queueTimestamp">-</span></p>
+        </div>
+
+        <!-- Quick Stats Cards -->
+        <div class="grid md:grid-cols-3 gap-6 mb-8">
+            <!-- Low Stock Alert -->
+            <div class="bg-gradient-to-r from-red-500 to-pink-600 text-white rounded-2xl shadow-xl p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-red-100 text-sm font-medium">Stock Alerts</p>
+                        <p class="text-2xl font-bold" id="lowStockCount">-</p>
+                        <p class="text-red-100 text-sm">Items need reordering</p>
+                    </div>
+                    <div class="text-4xl opacity-80">🚨</div>
+                </div>
+            </div>
+
+            <!-- Today's Sales -->
+            <div class="bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-2xl shadow-xl p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-green-100 text-sm font-medium">Today's Revenue</p>
+                        <p class="text-2xl font-bold" id="todayRevenue">LKR 0.00</p>
+                        <p class="text-green-100 text-sm">Total sales today</p>
+                    </div>
+                    <div class="text-4xl opacity-80">💰</div>
+                </div>
+            </div>
+
+            <!-- Active Items -->
+            <div class="bg-gradient-to-r from-blue-500 to-cyan-600 text-white rounded-2xl shadow-xl p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-blue-100 text-sm font-medium">Active Items</p>
+                        <p class="text-2xl font-bold" id="activeItemsCount">-</p>
+                        <p class="text-blue-100 text-sm">Available products</p>
+                    </div>
+                    <div class="text-4xl opacity-80">📦</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Polling intervals
+        let staffPollInterval;
+        let queuePollInterval;
+
+        // Format timestamp
+        function formatTimestamp(timestamp) {
+            const date = new Date(timestamp);
+            return date.toLocaleTimeString();
+        }
+
+        // Poll queue status every 2 seconds
+        function pollQueueStatus() {
+            fetch('/synex/queue/status')
+                .then(response => {
+                    if (!response.ok) {
+                        if (response.status === 401) {
+                            window.location.href = 'staff-login.html';
+                            return;
+                        }
+                        throw new Error('Queue status fetch failed');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.error) {
+                        console.error('Queue status error:', data.error);
+                        return;
+                    }
+
+                    document.getElementById('activeThreads').textContent = data.activeThreads;
+                    document.getElementById('queueSize').textContent = data.queueSize;
+                    document.getElementById('poolSize').textContent = data.poolSize;
+                    document.getElementById('queueTimestamp').textContent = formatTimestamp(data.timestamp);
+
+                    // Visual feedback for high queue size
+                    const queueElem = document.getElementById('queueSize');
+                    if (data.queueSize > 10) {
+                        queueElem.classList.add('text-red-600');
+                        queueElem.classList.remove('text-purple-600');
+                    } else {
+                        queueElem.classList.add('text-purple-600');
+                        queueElem.classList.remove('text-red-600');
+                    }
+                })
+                .catch(error => {
+                    console.error('Queue polling error:', error);
+                });
+        }
+
+        // Poll staff list every 5 seconds
+        function pollStaffList() {
+            fetch('/synex/manager/poll/staff')
+                .then(response => {
+                    if (!response.ok) {
+                        if (response.status === 401 || response.status === 403) {
+                            window.location.href = '/synex/staff-login.html';
+                            return;
+                        }
+                        throw new Error('Staff fetch failed');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.error) {
+                        console.error('Staff poll error:', data.error);
+                        return;
+                    }
+
+                    const tbody = document.getElementById('staffTableBody');
+                    document.getElementById('staffCount').textContent = data.staff.length;
+
+                    if (data.staff.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="4" class="px-4 py-8 text-center text-gray-500">No staff members found</td></tr>';
+                    } else {
+                        tbody.innerHTML = data.staff.map(staff => {
+                            const roleBadge = staff.role === 'MANAGER'
+                                ? '<span class="bg-purple-100 text-purple-800 px-2 py-1 rounded-full text-xs font-semibold">MANAGER</span>'
+                                : '<span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-semibold">CASHIER</span>';
+
+                            const statusBadge = staff.status === 'ACTIVE'
+                                ? '<span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-semibold">ACTIVE</span>'
+                                : '<span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-semibold">DISABLED</span>';
+
+                            return `
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-3 text-sm">${staff.userId}</td>
+                                    <td class="px-4 py-3 font-medium">${escapeHtml(staff.username)}</td>
+                                    <td class="px-4 py-3">${roleBadge}</td>
+                                    <td class="px-4 py-3">${statusBadge}</td>
+                                </tr>
+                            `;
+                        }).join('');
+                    }
+
+                    document.getElementById('staffTimestamp').textContent = formatTimestamp(data.timestamp);
+                })
+                .catch(error => {
+                    console.error('Staff polling error:', error);
+                });
+        }
+
+        // Escape HTML to prevent XSS
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Show/hide staff section
+        function showStaffSection() {
+            const section = document.getElementById("staffSection");
+            section.style.display = section.style.display === "none" ? "grid" : "none";
+        }
+
+        // Load dashboard stats (existing functionality)
+        async function loadDashboardStats() {
+            try {
+                // Load low stock count
+                const lowStockRes = await fetch("/synex/manager/reports?type=reorder");
+                const lowStockHtml = await lowStockRes.text();
+                const lowStockMatches = lowStockHtml.match(/Items with stock levels/);
+                if (lowStockMatches) {
+                    const countMatch = lowStockHtml.match(/Total Orders: (\d+)/);
+                    if (countMatch) {
+                        document.getElementById("lowStockCount").textContent = countMatch[1];
+                    }
+                }
+
+                // Load today's sales
+                const today = new Date().toISOString().split('T')[0];
+                const salesRes = await fetch(`/synex/manager/reports?type=sales&date=${today}`);
+                const salesHtml = await salesRes.text();
+                const revenueMatch = salesHtml.match(/Total Revenue: LKR ([0-9,]+\.\d+)/);
+                if (revenueMatch) {
+                    document.getElementById("todayRevenue").textContent = "LKR " + revenueMatch[1];
+                }
+
+            } catch (error) {
+                console.error("Error loading dashboard stats:", error);
+            }
+        }
+
+        // Initialize polling on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initial fetch
+            pollQueueStatus();
+            pollStaffList();
+            loadDashboardStats();
+
+            // Set up polling intervals
+            queuePollInterval = setInterval(pollQueueStatus, 2000); // Every 2 seconds
+            staffPollInterval = setInterval(pollStaffList, 5000);   // Every 5 seconds
+
+            // Auto-refresh dashboard stats every 5 minutes
+            setInterval(loadDashboardStats, 300000);
+        });
+
+        // Clean up intervals when page unloads
+        window.addEventListener('beforeunload', function() {
+            if (queuePollInterval) clearInterval(queuePollInterval);
+            if (staffPollInterval) clearInterval(staffPollInterval);
+        });
+    </script>
+
+</body>
+</html>

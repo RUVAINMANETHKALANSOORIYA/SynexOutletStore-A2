@@ -1,4 +1,5 @@
 package domain.orders;
 
-public class PaymentMethod {
+public enum PaymentMethod {
+    CASH, CARD
 }

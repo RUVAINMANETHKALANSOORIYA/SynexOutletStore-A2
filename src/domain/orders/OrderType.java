@@ -1,4 +1,5 @@
 package domain.orders;
 
-public class OrderType {
+public enum OrderType {
+    ONLINE, PHYSICAL
 }

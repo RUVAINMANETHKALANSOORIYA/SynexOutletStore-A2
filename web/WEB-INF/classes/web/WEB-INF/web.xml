@@ -1,0 +1,117 @@
+<!--<?xml version="1.0" encoding="UTF-8"?>-->
+<!--<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"-->
+<!--         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"-->
+<!--         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"-->
+<!--         version="4.0">-->
+
+
+
+<!--    <welcome-file-list>-->
+<!--        <welcome-file>staff-login.html</welcome-file>-->
+<!--    </welcome-file-list>-->
+
+<!--    <servlet>-->
+<!--        <servlet-name>StaffLoginServlet</servlet-name>-->
+<!--        <servlet-class>presentation.web.StaffLoginServlet</servlet-class>-->
+<!--    </servlet>-->
+<!--    <servlet-mapping>-->
+<!--        <servlet-name>StaffLoginServlet</servlet-name>-->
+<!--        <url-pattern>/staff/login</url-pattern>-->
+<!--    </servlet-mapping>-->
+
+<!--    <servlet>-->
+<!--        <servlet-name>LogoutServlet</servlet-name>-->
+<!--        <servlet-class>presentation.web.LogoutServlet</servlet-class>-->
+<!--    </servlet>-->
+<!--    <servlet-mapping>-->
+<!--        <servlet-name>LogoutServlet</servlet-name>-->
+<!--        <url-pattern>/staff/logout</url-pattern>-->
+<!--    </servlet-mapping>-->
+<!--    <servlet>-->
+<!--        <servlet-name>CustomerRegisterServlet</servlet-name>-->
+<!--        <servlet-class>presentation.web.CustomerRegisterServlet</servlet-class>-->
+<!--    </servlet>-->
+<!--    <servlet-mapping>-->
+<!--        <servlet-name>CustomerRegisterServlet</servlet-name>-->
+<!--        <url-pattern>/customer/register</url-pattern>-->
+<!--    </servlet-mapping>-->
+
+<!--    <servlet>-->
+<!--        <servlet-name>CustomerLoginServlet</servlet-name>-->
+<!--        <servlet-class>presentation.web.CustomerLoginServlet</servlet-class>-->
+<!--    </servlet>-->
+<!--    <servlet-mapping>-->
+<!--        <servlet-name>CustomerLoginServlet</servlet-name>-->
+<!--        <url-pattern>/customer/login</url-pattern>-->
+<!--    </servlet-mapping>-->
+<!--    <servlet>-->
+<!--        <servlet-name>ManagerRegisterCashierServlet</servlet-name>-->
+<!--        <servlet-class>presentation.web.ManagerRegisterCashierServlet</servlet-class>-->
+<!--    </servlet>-->
+
+<!--    <servlet-mapping>-->
+<!--        <servlet-name>ManagerRegisterCashierServlet</servlet-name>-->
+<!--        <url-pattern>/manager/register-cashier</url-pattern>-->
+<!--    </servlet-mapping>-->
+<!--    <servlet>-->
+<!--        <servlet-name>ManagerStaffListServlet</servlet-name>-->
+<!--        <servlet-class>presentation.web.ManagerStaffListServlet</servlet-class>-->
+<!--    </servlet>-->
+<!--    <servlet-mapping>-->
+<!--        <servlet-name>ManagerStaffListServlet</servlet-name>-->
+<!--        <url-pattern>/manager/staff-list</url-pattern>-->
+<!--    </servlet-mapping>-->
+<!--    <servlet>-->
+<!--        <servlet-name>StoreHomeServlet</servlet-name>-->
+<!--        <servlet-class>presentation.web.StoreHomeServlet</servlet-class>-->
+<!--    </servlet>-->
+<!--    <servlet-mapping>-->
+<!--        <servlet-name>StoreHomeServlet</servlet-name>-->
+<!--        <url-pattern>/store/home</url-pattern>-->
+<!--    </servlet-mapping>-->
+<!--    <servlet>-->
+<!--        <servlet-name>CartAddServlet</servlet-name>-->
+<!--        <servlet-class>presentation.web.CartAddServlet</servlet-class>-->
+<!--    </servlet>-->
+<!--    <servlet-mapping>-->
+<!--        <servlet-name>CartAddServlet</servlet-name>-->
+<!--        <url-pattern>/cart/add</url-pattern>-->
+<!--    </servlet-mapping>-->
+
+<!--    <servlet>-->
+<!--        <servlet-name>CartViewServlet</servlet-name>-->
+<!--        <servlet-class>presentation.web.CartViewServlet</servlet-class>-->
+<!--    </servlet>-->
+<!--    <servlet-mapping>-->
+<!--        <servlet-name>CartViewServlet</servlet-name>-->
+<!--        <url-pattern>/cart/view</url-pattern>-->
+<!--    </servlet-mapping>-->
+
+<!--    <servlet>-->
+<!--        <servlet-name>CartRemoveServlet</servlet-name>-->
+<!--        <servlet-class>presentation.web.CartRemoveServlet</servlet-class>-->
+<!--    </servlet>-->
+<!--    <servlet-mapping>-->
+<!--        <servlet-name>CartRemoveServlet</servlet-name>-->
+<!--        <url-pattern>/cart/remove</url-pattern>-->
+<!--    </servlet-mapping>-->
+
+<!--    <servlet>-->
+<!--        <servlet-name>CartClearServlet</servlet-name>-->
+<!--        <servlet-class>presentation.web.CartClearServlet</servlet-class>-->
+<!--    </servlet>-->
+<!--    <servlet-mapping>-->
+<!--        <servlet-name>CartClearServlet</servlet-name>-->
+<!--        <url-pattern>/cart/clear</url-pattern>-->
+<!--    </servlet-mapping>-->
+<!--    <servlet>-->
+<!--        <servlet-name>CheckoutServlet</servlet-name>-->
+<!--        <servlet-class>presentation.web.CheckoutServlet</servlet-class>-->
+<!--    </servlet>-->
+
+<!--    <servlet-mapping>-->
+<!--        <servlet-name>CheckoutServlet</servlet-name>-->
+<!--        <url-pattern>/checkout</url-pattern>-->
+<!--    </servlet-mapping>-->
+
+<!--</web-app>-->
