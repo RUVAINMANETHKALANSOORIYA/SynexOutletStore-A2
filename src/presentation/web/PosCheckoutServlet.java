@@ -41,8 +41,8 @@ public class PosCheckoutServlet extends HttpServlet {
             return;
         }
 
-        // Session cart you already use in UI: domain.store.Cart
-        domain.store.Cart storeCart = (domain.store.Cart) session.getAttribute("cart");
+        // Use separate cart for POS to avoid conflict with customer carts
+        domain.store.Cart storeCart = (domain.store.Cart) session.getAttribute("posCart");
         if (storeCart == null || storeCart.isEmpty()) {
             resp.sendRedirect(req.getContextPath() + "/pos-checkout.html?error=empty_cart");
             return;
@@ -122,7 +122,7 @@ public class PosCheckoutServlet extends HttpServlet {
                        ", OrderId: " + orderId);
 
             storeCart.clear();
-            session.setAttribute("cart", storeCart);
+            session.setAttribute("posCart", storeCart);
 
             resp.sendRedirect(req.getContextPath() + "/pos-success.html?orderId=" + orderId);
 

@@ -68,7 +68,7 @@ public class PosItemsServlet extends HttpServlet {
             out.println("<tr class='hover:bg-orange-50 transition duration-200'>");
             out.println("<td class='px-6 py-4 font-mono text-sm text-gray-600'>" + it.code() + "</td>");
             out.println("<td class='px-6 py-4 text-gray-800 font-medium'>" + it.name() + "</td>");
-            out.println("<td class='px-6 py-4 text-green-600 font-semibold'>$" + it.price() + "</td>");
+            out.println("<td class='px-6 py-4 text-green-600 font-semibold'>LKR " + it.price() + "</td>");
             out.println("<td class='px-6 py-4'>");
             out.println("<form method='post' action='" + req.getContextPath() + "/pos/cart/add' class='flex gap-2'>");
             out.println("<input type='hidden' name='itemCode' value='" + it.code() + "'/>");

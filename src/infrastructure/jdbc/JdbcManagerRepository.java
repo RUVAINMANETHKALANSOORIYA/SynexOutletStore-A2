@@ -329,7 +329,7 @@ public class JdbcManagerRepository implements ManagerRepository {
     public List<StockReport> getStockReport() {
         String sql = """
             SELECT s.item_code, i.name, s.batch_code, 
-                   COALESCE(s.purchase_date, s.received_date) as purchase_date,
+                   s.received_date as purchase_date,
                    s.expiry_date, s.shelf_qty, s.web_qty, i.price, s.supplier
             FROM stock s
             JOIN items i ON s.item_code = i.item_code

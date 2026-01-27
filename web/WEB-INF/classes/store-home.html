@@ -14,7 +14,7 @@
                     🛍️ Welcome to SYOS Online Store
                 </h2>
 
-                <form method="post" action="/synex/customer/logout">
+                <form id="logoutForm" method="post">
                     <button type="submit"
                             class="bg-gradient-to-r from-red-500 to-pink-500 text-white px-6 py-2 rounded-lg hover:from-red-600 hover:to-pink-600 transition duration-200 font-semibold shadow-md">
                         Logout
@@ -42,5 +42,13 @@
             </div>
         </div>
     </main>
+
+    <script>
+        // Get context path dynamically
+        const contextPath = window.location.pathname.substring(0, window.location.pathname.indexOf('/', 1)) || '';
+
+        // Set form action dynamically
+        document.getElementById('logoutForm').action = contextPath + '/customer/logout';
+    </script>
 </body>
 </html>

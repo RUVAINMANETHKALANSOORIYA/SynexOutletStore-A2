@@ -16,7 +16,7 @@
             <p class="text-gray-600">Access your staff account</p>
         </div>
 
-        <form method="post" action="staff/login" class="space-y-6">
+        <form id="staffLoginForm" method="post" class="space-y-6">
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Username</label>
                 <input type="text" name="username" required
@@ -54,5 +54,13 @@
             </a>
         </div>
     </div>
+
+    <script>
+        // Get context path dynamically
+        const contextPath = window.location.pathname.substring(0, window.location.pathname.indexOf('/', 1)) || '';
+
+        // Set form action dynamically
+        document.getElementById('staffLoginForm').action = contextPath + '/staff/login';
+    </script>
 </body>
 </html>

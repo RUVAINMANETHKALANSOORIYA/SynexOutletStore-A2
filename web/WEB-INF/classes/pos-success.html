@@ -21,10 +21,18 @@
             <p class="text-sm text-gray-600">Stock deducted from shelf (FIFO by expiry)</p>
         </div>
 
-        <a href="/synex/pos/home"
+        <a id="backToPosLink" href="#"
            class="inline-block bg-gradient-to-r from-orange-600 to-amber-600 text-white font-semibold px-8 py-3 rounded-lg hover:from-orange-700 hover:to-amber-700 transform hover:scale-[1.02] transition duration-200 shadow-lg">
             ← Back to POS
         </a>
     </div>
+
+    <script>
+        // Get context path dynamically
+        const contextPath = window.location.pathname.substring(0, window.location.pathname.indexOf('/', 1)) || '';
+
+        // Set link href dynamically
+        document.getElementById('backToPosLink').href = contextPath + '/pos/home';
+    </script>
 </body>
 </html>

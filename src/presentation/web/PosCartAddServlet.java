@@ -20,10 +20,10 @@ public class PosCartAddServlet extends HttpServlet {
         String itemCode = req.getParameter("itemCode");
         int qty = parseInt(req.getParameter("qty"), 1);
 
-        Cart cart = SessionCart.getOrCreate(session);
+        Cart cart = SessionCart.getOrCreatePosCart(session);
         cart.add(itemCode, qty);
 
-        resp.sendRedirect(req.getContextPath() + "/cart/view");
+        resp.sendRedirect(req.getContextPath() + "/pos/home");
     }
 
     private int parseInt(String s, int def) {

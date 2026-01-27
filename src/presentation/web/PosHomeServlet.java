@@ -81,7 +81,7 @@ public class PosHomeServlet extends HttpServlet {
                 out.append("<div class='p-5'>");
                 out.append("<p class='text-xs text-gray-500 font-mono mb-1'>").append(escape(it.code())).append("</p>");
                 out.append("<h4 class='text-lg font-bold text-gray-800 mb-2'>").append(escape(it.name())).append("</h4>");
-                out.append("<p class='text-2xl font-bold bg-gradient-to-r from-green-600 to-teal-600 bg-clip-text text-transparent mb-4'>$").append(it.price()).append("</p>");
+                out.append("<p class='text-2xl font-bold bg-gradient-to-r from-green-600 to-teal-600 bg-clip-text text-transparent mb-4'>LKR ").append(it.price()).append("</p>");
 
                 out.append("<form method='post' action='").append(req.getContextPath()).append("/pos/cart/add' class='space-y-3'>");
                 out.append("<input type='hidden' name='itemCode' value='").append(escape(it.code())).append("'>");

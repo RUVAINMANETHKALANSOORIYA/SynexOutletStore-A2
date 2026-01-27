@@ -22,7 +22,7 @@
             </div>
         </div>
 
-        <form method="post" action="checkout" class="space-y-6">
+        <form id="checkoutForm" method="post" class="space-y-6">
             <div class="bg-gray-50 rounded-lg p-6">
                 <p class="text-sm font-semibold text-gray-700 mb-4">Select Payment Method:</p>
 
@@ -60,6 +60,12 @@
 
     <!-- ✅ Error Handling Script -->
     <script>
+        // Get context path dynamically
+        const contextPath = window.location.pathname.substring(0, window.location.pathname.indexOf('/', 1)) || '';
+
+        // Set form action dynamically
+        document.getElementById('checkoutForm').action = contextPath + '/checkout';
+
         // Check for error parameter in URL
         const urlParams = new URLSearchParams(window.location.search);
         const error = urlParams.get('error');
