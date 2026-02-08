@@ -267,5 +267,35 @@
         <url-pattern>/queue/status</url-pattern>
     </servlet-mapping>
 
+    <!-- Discount Management -->
+    <servlet>
+        <servlet-name>DiscountManagementServlet</servlet-name>
+        <servlet-class>presentation.web.DiscountManagementServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DiscountManagementServlet</servlet-name>
+        <url-pattern>/manager/discounts</url-pattern>
+    </servlet-mapping>
+
+    <!-- Discount API for AJAX -->
+    <servlet>
+        <servlet-name>DiscountApiServlet</servlet-name>
+        <servlet-class>presentation.web.DiscountApiServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DiscountApiServlet</servlet-name>
+        <url-pattern>/discounts/*</url-pattern>
+    </servlet-mapping>
+
+    <!-- Queue Status for Manager Dashboard -->
+    <servlet>
+        <servlet-name>QueueStatusServlet</servlet-name>
+        <servlet-class>presentation.web.QueueStatusServlet</servlet-class>
+    </servlet>
+<!--    <servlet-mapping>-->
+<!--        <servlet-name>QueueStatusServlet</servlet-name>-->
+<!--        <url-pattern>/queue/status</url-pattern>-->
+<!--    </servlet-mapping>-->
+
 </web-app>
 

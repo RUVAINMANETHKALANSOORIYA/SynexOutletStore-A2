@@ -14,19 +14,19 @@ public class FakeManagerRepository implements ManagerRepository {
 
     @Override
     public void createItem(String itemCode, String name, double price) {
-        items.put(itemCode, new Item(itemCode, name, BigDecimal.valueOf(price), true));
+        items.put(itemCode, new Item(itemCode, name, BigDecimal.valueOf(price), true, null));
     }
 
     @Override
     public void updateItem(String itemCode, String name, double price, boolean isActive) {
-        items.put(itemCode, new Item(itemCode, name, BigDecimal.valueOf(price), isActive));
+        items.put(itemCode, new Item(itemCode, name, BigDecimal.valueOf(price), isActive, null));
     }
 
     @Override
     public void deactivateItem(String itemCode) {
         Item item = items.get(itemCode);
         if (item != null) {
-            items.put(itemCode, new Item(itemCode, item.name(), item.price(), false));
+            items.put(itemCode, new Item(itemCode, item.name(), item.price(), false, item.category()));
         }
     }
 

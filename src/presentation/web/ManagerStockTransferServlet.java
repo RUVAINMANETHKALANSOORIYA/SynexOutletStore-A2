@@ -183,26 +183,105 @@ public class ManagerStockTransferServlet extends HttpServlet {
             String quantityStr = req.getParameter("quantity");
             String notes = req.getParameter("notes");
 
-            if (itemCode == null || quantityStr == null) {
-                resp.sendRedirect(req.getContextPath() + "/manager/stock/transfer?error=missing_fields");
+            // Enhanced input validation
+            if (itemCode == null || itemCode.trim().isEmpty()) {
+                resp.sendRedirect(req.getContextPath() + "/manager/stock/transfer?error=missing_item_code");
                 return;
             }
 
-            int quantity = Integer.parseInt(quantityStr);
+            if (quantityStr == null || quantityStr.trim().isEmpty()) {
+                resp.sendRedirect(req.getContextPath() + "/manager/stock/transfer?error=missing_quantity");
+                return;
+            }
+
+            int quantity;
+            try {
+                quantity = Integer.parseInt(quantityStr.trim());
+                if (quantity <= 0) {
+                    resp.sendRedirect(req.getContextPath() + "/manager/stock/transfer?error=invalid_quantity_must_be_positive");
+                    return;
+                }
+                if (quantity > 9999) {
+                    resp.sendRedirect(req.getContextPath() + "/manager/stock/transfer?error=quantity_too_large");
+                    return;
+                }
+            } catch (NumberFormatException e) {
+                resp.sendRedirect(req.getContextPath() + "/manager/stock/transfer?error=invalid_quantity_format");
+                return;
+            }
+
+            // Validate and sanitize inputs
+            String sanitizedItemCode = itemCode.trim().toUpperCase();
+            String sanitizedNotes = notes != null ? notes.trim() : null;
+            if (sanitizedNotes != null && sanitizedNotes.length() > 255) {
+                sanitizedNotes = sanitizedNotes.substring(0, 255); // Truncate if too long
+            }
 
             ManagerService managerService = new ManagerServiceImpl(new JdbcManagerRepository());
-            managerService.transferStockShelfToWeb(itemCode.trim(), quantity, managerId,
-                notes != null ? notes.trim() : null);
+            managerService.transferStockShelfToWeb(sanitizedItemCode, quantity, managerId, sanitizedNotes);
 
-            resp.sendRedirect(req.getContextPath() + "/manager/stock/transfer?success=transfer_completed");
+            resp.sendRedirect(req.getContextPath() + "/manager/stock/transfer?success=transfer_completed&item=" +
+                             sanitizedItemCode + "&qty=" + quantity);
 
-        } catch (NumberFormatException e) {
-            resp.sendRedirect(req.getContextPath() + "/manager/stock/transfer?error=invalid_quantity");
+        } catch (domain.exception.StockTransferException e) {
+            // Handle specific stock transfer exceptions
+            String errorMessage = e.getMessage().toLowerCase().replace(" ", "_").replace(":", "");
+            if (e.getMessage().contains("insufficient stock")) {
+                resp.sendRedirect(req.getContextPath() + "/manager/stock/transfer?error=insufficient_shelf_stock");
+            } else if (e.getMessage().contains("not found")) {
+                resp.sendRedirect(req.getContextPath() + "/manager/stock/transfer?error=item_not_found");
+            } else if (e.getMessage().contains("inactive")) {
+                resp.sendRedirect(req.getContextPath() + "/manager/stock/transfer?error=item_inactive");
+            } else if (e.getMessage().contains("invalid quantity")) {
+                resp.sendRedirect(req.getContextPath() + "/manager/stock/transfer?error=invalid_quantity");
+            } else if (e.getMessage().contains("concurrent")) {
+                resp.sendRedirect(req.getContextPath() + "/manager/stock/transfer?error=concurrent_modification");
+            } else {
+                resp.sendRedirect(req.getContextPath() + "/manager/stock/transfer?error=transfer_validation_failed");
+            }
+
+            // Log the specific error for debugging
+            java.util.logging.Logger.getLogger(this.getClass().getName())
+                .warning("Stock transfer validation failed: " + e.getMessage());
+
+        } catch (IllegalArgumentException e) {
+            // Handle validation errors from service layer
+            if (e.getMessage().contains("empty")) {
+                resp.sendRedirect(req.getContextPath() + "/manager/stock/transfer?error=missing_item_code");
+            } else if (e.getMessage().contains("positive")) {
+                resp.sendRedirect(req.getContextPath() + "/manager/stock/transfer?error=invalid_quantity_must_be_positive");
+            } else if (e.getMessage().contains("not found")) {
+                resp.sendRedirect(req.getContextPath() + "/manager/stock/transfer?error=item_not_found");
+            } else if (e.getMessage().contains("inactive")) {
+                resp.sendRedirect(req.getContextPath() + "/manager/stock/transfer?error=item_inactive");
+            } else {
+                resp.sendRedirect(req.getContextPath() + "/manager/stock/transfer?error=validation_failed");
+            }
+
+            java.util.logging.Logger.getLogger(this.getClass().getName())
+                .warning("Stock transfer argument validation failed: " + e.getMessage());
+
         } catch (RuntimeException e) {
-            resp.sendRedirect(req.getContextPath() + "/manager/stock/transfer?error=" + e.getMessage().replace(" ", "_"));
-        } catch (Exception e) {
+            // Handle database and other runtime errors
+            if (e.getMessage().contains("Database")) {
+                resp.sendRedirect(req.getContextPath() + "/manager/stock/transfer?error=database_error");
+            } else if (e.getMessage().contains("connection")) {
+                resp.sendRedirect(req.getContextPath() + "/manager/stock/transfer?error=connection_error");
+            } else {
+                resp.sendRedirect(req.getContextPath() + "/manager/stock/transfer?error=system_error");
+            }
+
+            java.util.logging.Logger.getLogger(this.getClass().getName())
+                .severe("Stock transfer runtime error: " + e.getMessage());
             e.printStackTrace();
-            resp.sendRedirect(req.getContextPath() + "/manager/stock/transfer?error=transfer_failed");
+
+        } catch (Exception e) {
+            // Catch-all for any unexpected exceptions
+            resp.sendRedirect(req.getContextPath() + "/manager/stock/transfer?error=unexpected_error");
+
+            java.util.logging.Logger.getLogger(this.getClass().getName())
+                .severe("Unexpected error during stock transfer: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }

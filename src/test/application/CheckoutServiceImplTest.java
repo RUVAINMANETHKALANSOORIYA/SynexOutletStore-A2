@@ -36,7 +36,7 @@ class CheckoutServiceImplTest {
     @DisplayName("Should fail online order if cart is empty")
     void testPlaceOnlineOrderEmptyCart() {
         Cart cart = new Cart();
-        assertThrows(IllegalArgumentException.class, () -> 
+        assertThrows(domain.exception.CheckoutFailedException.class, () -> 
             checkoutService.placeOnlineOrder(1L, cart, PaymentMethod.CARD));
     }
 
@@ -45,7 +45,7 @@ class CheckoutServiceImplTest {
     void testPlaceOnlineOrderNoPayment() {
         Cart cart = new Cart();
         cart.add("ITM001", "Milk", 450.0, 1);
-        assertThrows(IllegalArgumentException.class, () -> 
+        assertThrows(domain.exception.CheckoutFailedException.class, () -> 
             checkoutService.placeOnlineOrder(1L, cart, null));
     }
 

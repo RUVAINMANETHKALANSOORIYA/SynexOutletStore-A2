@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>POS Checkout - Item Discounts</title>
+    <style>
+        .cart-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        .cart-table th, .cart-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        .cart-table th { background-color: #f2f2f2; }
+        .discount-row { background-color: #e8f5e8; }
+        .discount-amount { color: green; font-weight: bold; }
+        .original-price { text-decoration: line-through; color: #999; }
+        .discounted-price { color: green; font-weight: bold; }
+        .total-section { margin: 20px 0; padding: 15px; border: 2px solid #ddd; }
+        .total-savings { color: green; font-size: 18px; font-weight: bold; }
+        .checkout-btn { background: #28a745; color: white; padding: 15px 30px; font-size: 16px; border: none; cursor: pointer; }
+        .checkout-btn:hover { background: #218838; }
+    </style>
+</head>
+<body>
+    <h1>POS Checkout - Item-Specific Discounts</h1>
+
+    <div id="cart-container">
+        <table class="cart-table" id="cartTable">
+            <thead>
+                <tr>
+                    <th>Item Code</th>
+                    <th>Item Name</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Discount</th>
+                    <th>Final Price</th>
+                    <th>Line Total</th>
+                </tr>
+            </thead>
+            <tbody id="cartItems">
+                <!-- Cart items will be populated here -->
+            </tbody>
+        </table>
+
+        <div class="total-section">
+            <div>Subtotal: LKR <span id="subtotal">0.00</span></div>
+            <div class="total-savings">Total Savings: LKR <span id="totalSavings">0.00</span></div>
+            <div style="font-size: 20px; font-weight: bold;">
+                Final Total: LKR <span id="finalTotal">0.00</span>
+            </div>
+        </div>
+
+        <form id="checkoutForm" action="/synex-web/pos-checkout" method="post">
+            <input type="hidden" name="paymentMethod" value="CASH">
+            <button type="submit" class="checkout-btn">Complete POS Checkout</button>
+        </form>
+    </div>
+
+    <script>
+        // Sample cart data with discounts applied
+        const sampleCart = [
+            {
+                itemCode: 'LAPTOP001',
+                name: 'Gaming Laptop',
+                qty: 1,
+                unitPrice: 150000.00,
+                discountAmount: 30000.00,
+                discountCode: 'LAPTOP20'
+            },
+            {
+                itemCode: 'SHIRT001',
+                name: 'Cotton T-Shirt',
+                qty: 2,
+                unitPrice: 2500.00,
+                discountAmount: 750.00,
+                discountCode: 'CLOTHES15'
+            },
+            {
+                itemCode: 'MOUSE001',
+                name: 'Wireless Mouse',
+                qty: 1,
+                unitPrice: 3500.00,
+                discountAmount: 0.00,
+                discountCode: null
+            }
+        ];
+
+        function renderCartWithDiscounts() {
+            const tbody = document.getElementById('cartItems');
+            let subtotal = 0;
+            let totalSavings = 0;
+
+            tbody.innerHTML = sampleCart.map(item => {
+                const lineTotal = item.unitPrice * item.qty;
+                const discountedLineTotal = lineTotal - item.discountAmount;
+
+                subtotal += lineTotal;
+                totalSavings += item.discountAmount;
+
+                const discountedUnitPrice = item.unitPrice - (item.discountAmount / item.qty);
+
+                return `
+                    <tr ${item.discountAmount > 0 ? 'class="discount-row"' : ''}>
+                        <td>${item.itemCode}</td>
+                        <td>${item.name}</td>
+                        <td>${item.qty}</td>
+                        <td>
+                            ${item.discountAmount > 0 ?
+                                `<span class="original-price">LKR ${item.unitPrice.toFixed(2)}</span><br>
+                                 <span class="discounted-price">LKR ${discountedUnitPrice.toFixed(2)}</span>`
+                                :
+                                `LKR ${item.unitPrice.toFixed(2)}`
+                            }
+                        </td>
+                        <td>
+                            ${item.discountAmount > 0 ?
+                                `<span class="discount-amount">-LKR ${item.discountAmount.toFixed(2)}</span><br>
+                                 <small>(${item.discountCode})</small>`
+                                :
+                                '-'
+                            }
+                        </td>
+                        <td class="${item.discountAmount > 0 ? 'discounted-price' : ''}">
+                            LKR ${discountedUnitPrice.toFixed(2)}
+                        </td>
+                        <td class="${item.discountAmount > 0 ? 'discounted-price' : ''}">
+                            LKR ${discountedLineTotal.toFixed(2)}
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            // Update totals
+            document.getElementById('subtotal').textContent = subtotal.toFixed(2);
+            document.getElementById('totalSavings').textContent = totalSavings.toFixed(2);
+            document.getElementById('finalTotal').textContent = (subtotal - totalSavings).toFixed(2);
+        }
+
+        // Simulate loading discounted cart from server
+        function loadDiscountedCart() {
+            // In real implementation, this would fetch from server:
+            // fetch('/api/pos-cart-with-discounts')
+            //     .then(res => res.json())
+            //     .then(cart => renderCartWithDiscounts(cart));
+
+            renderCartWithDiscounts();
+        }
+
+        // Load cart when page loads
+        document.addEventListener('DOMContentLoaded', loadDiscountedCart);
+    </script>
+</body>
+</html>

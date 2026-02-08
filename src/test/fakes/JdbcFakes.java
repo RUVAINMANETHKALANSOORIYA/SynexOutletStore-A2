@@ -63,12 +63,21 @@ public class JdbcFakes {
                     }
                     if (method.getName().equals("close")) return null;
                     if (method.getName().equals("getLong")) return 1L;
-                    if (method.getName().equals("getString")) return "dummy";
+                    if (method.getName().equals("getString")) {
+                        if (args != null && args.length > 0 && args[0] instanceof String) {
+                            String label = (String) args[0];
+                            if ("transfer_type".equals(label)) return "SHELF_TO_WEB";
+                            if ("discount_type".equals(label)) return "FIXED_AMOUNT";
+                            if ("source".equals(label)) return "WEB";
+                        }
+                        return "dummy";
+                    }
                     if (method.getName().equals("getBigDecimal")) return java.math.BigDecimal.ONE;
-                    if (method.getName().equals("getInt")) return 1;
+                    if (method.getName().equals("getInt")) return 100;
                     if (method.getName().equals("getDouble")) return 1.0;
                     if (method.getName().equals("getDate")) return java.sql.Date.valueOf(java.time.LocalDate.now());
                     if (method.getName().equals("getTimestamp")) return java.sql.Timestamp.valueOf(java.time.LocalDateTime.now());
+                    if (method.getName().equals("getBoolean")) return true;
                     return null;
                 }
         );

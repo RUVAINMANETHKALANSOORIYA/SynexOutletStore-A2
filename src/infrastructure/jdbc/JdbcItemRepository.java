@@ -11,7 +11,7 @@ public final class JdbcItemRepository implements ItemRepository {
 
     @Override
     public List<Item> findAllActive() {
-        String sql = "SELECT item_code, name, price FROM items WHERE is_active=1 ORDER BY name";
+        String sql = "SELECT item_code, name, price, category FROM items WHERE is_active=1 ORDER BY name";
         try (Connection c = Db.get();
              PreparedStatement ps = c.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -21,7 +21,9 @@ public final class JdbcItemRepository implements ItemRepository {
                 list.add(new Item(
                         rs.getString("item_code"),
                         rs.getString("name"),
-                        rs.getBigDecimal("price")
+                        rs.getBigDecimal("price"),
+                        true,
+                        rs.getString("category")
                 ));
             }
             return list;
@@ -33,7 +35,7 @@ public final class JdbcItemRepository implements ItemRepository {
 
     @Override
     public Optional<Item> findByCode(String itemCode) {
-        String sql = "SELECT item_code, name, price FROM items WHERE item_code=? AND is_active=1";
+        String sql = "SELECT item_code, name, price, category FROM items WHERE item_code=? AND is_active=1";
         try (Connection c = Db.get();
              PreparedStatement ps = c.prepareStatement(sql)) {
 
@@ -44,7 +46,9 @@ public final class JdbcItemRepository implements ItemRepository {
                 return Optional.of(new Item(
                         rs.getString("item_code"),
                         rs.getString("name"),
-                        rs.getBigDecimal("price")
+                        rs.getBigDecimal("price"),
+                        true,
+                        rs.getString("category")
                 ));
             }
 

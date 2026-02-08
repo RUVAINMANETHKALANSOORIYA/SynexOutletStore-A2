@@ -72,7 +72,7 @@ public class JdbcManagerRepository implements ManagerRepository {
 
     @Override
     public List<Item> getAllItems() {
-        String sql = "SELECT item_code, name, price, is_active FROM items ORDER BY name";
+        String sql = "SELECT item_code, name, price, is_active, category FROM items ORDER BY name";
         List<Item> items = new ArrayList<>();
 
         try (Connection conn = Db.get();
@@ -84,7 +84,8 @@ public class JdbcManagerRepository implements ManagerRepository {
                     rs.getString("item_code"),
                     rs.getString("name"),
                     BigDecimal.valueOf(rs.getDouble("price")),
-                    rs.getBoolean("is_active")
+                    rs.getBoolean("is_active"),
+                    rs.getString("category")
                 ));
             }
 
@@ -97,7 +98,7 @@ public class JdbcManagerRepository implements ManagerRepository {
 
     @Override
     public List<Item> getActiveItems() {
-        String sql = "SELECT item_code, name, price, is_active FROM items WHERE is_active = 1 ORDER BY name";
+        String sql = "SELECT item_code, name, price, is_active, category FROM items WHERE is_active = 1 ORDER BY name";
         List<Item> items = new ArrayList<>();
 
         try (Connection conn = Db.get();
@@ -109,7 +110,8 @@ public class JdbcManagerRepository implements ManagerRepository {
                     rs.getString("item_code"),
                     rs.getString("name"),
                     BigDecimal.valueOf(rs.getDouble("price")),
-                    rs.getBoolean("is_active")
+                    rs.getBoolean("is_active"),
+                    rs.getString("category")
                 ));
             }
 
@@ -122,7 +124,7 @@ public class JdbcManagerRepository implements ManagerRepository {
 
     @Override
     public Optional<Item> getItemByCode(String itemCode) {
-        String sql = "SELECT item_code, name, price, is_active FROM items WHERE item_code = ?";
+        String sql = "SELECT item_code, name, price, is_active, category FROM items WHERE item_code = ?";
 
         try (Connection conn = Db.get();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -134,7 +136,8 @@ public class JdbcManagerRepository implements ManagerRepository {
                         rs.getString("item_code"),
                         rs.getString("name"),
                         BigDecimal.valueOf(rs.getDouble("price")),
-                        rs.getBoolean("is_active")
+                        rs.getBoolean("is_active"),
+                        rs.getString("category")
                     ));
                 }
             }
@@ -183,6 +186,35 @@ public class JdbcManagerRepository implements ManagerRepository {
 
     @Override
     public void transferStock(String itemCode, int quantity, long managerId, String notes) {
+        // Enhanced input validation
+        if (itemCode == null || itemCode.trim().isEmpty()) {
+            throw domain.exception.StockTransferException.invalidItemCode(itemCode);
+        }
+        if (quantity <= 0) {
+            throw domain.exception.StockTransferException.invalidQuantity(quantity);
+        }
+        if (quantity > 9999) { // Prevent extremely large transfers
+            throw domain.exception.StockTransferException.invalidQuantity(quantity);
+        }
+
+        // Verify item exists and is active
+        String checkItemSql = "SELECT is_active FROM items WHERE item_code = ?";
+        try (Connection conn = Db.get();
+             PreparedStatement checkStmt = conn.prepareStatement(checkItemSql)) {
+
+            checkStmt.setString(1, itemCode.trim());
+            try (ResultSet rs = checkStmt.executeQuery()) {
+                if (!rs.next()) {
+                    throw domain.exception.StockTransferException.itemNotFound(itemCode);
+                }
+                if (!rs.getBoolean("is_active")) {
+                    throw domain.exception.StockTransferException.inactiveItem(itemCode);
+                }
+            }
+        } catch (SQLException e) {
+            throw domain.exception.StockTransferException.concurrentModification(itemCode);
+        }
+
         String selectStockSql = """
             SELECT stock_id, shelf_qty, web_qty FROM stock 
             WHERE item_code = ? AND shelf_qty >= ? 
@@ -203,46 +235,86 @@ public class JdbcManagerRepository implements ManagerRepository {
             try {
                 // Find suitable stock batch with sufficient shelf quantity
                 Long stockId = null;
+                int availableShelfQty = 0;
+
                 try (PreparedStatement selectStmt = conn.prepareStatement(selectStockSql)) {
-                    selectStmt.setString(1, itemCode);
+                    selectStmt.setString(1, itemCode.trim());
                     selectStmt.setInt(2, quantity);
 
                     try (ResultSet rs = selectStmt.executeQuery()) {
                         if (rs.next()) {
                             stockId = rs.getLong("stock_id");
+                            availableShelfQty = rs.getInt("shelf_qty");
                         } else {
-                            throw new RuntimeException("Insufficient shelf stock for item: " + itemCode);
+                            // Get actual available quantity for better error message
+                            String getAvailableQtySql = "SELECT COALESCE(SUM(shelf_qty), 0) as total_shelf_qty FROM stock WHERE item_code = ?";
+                            try (PreparedStatement availableStmt = conn.prepareStatement(getAvailableQtySql)) {
+                                availableStmt.setString(1, itemCode.trim());
+                                try (ResultSet availableRs = availableStmt.executeQuery()) {
+                                    if (availableRs.next()) {
+                                        availableShelfQty = availableRs.getInt("total_shelf_qty");
+                                    }
+                                }
+                            }
+                            throw domain.exception.StockTransferException.insufficientStock(itemCode, quantity, availableShelfQty);
                         }
                     }
                 }
 
+                // Double-check we have valid stock ID
+                if (stockId == null || stockId <= 0) {
+                    throw domain.exception.StockTransferException.concurrentModification(itemCode);
+                }
+
                 // Update stock quantities
+                int updatedRows;
                 try (PreparedStatement updateStmt = conn.prepareStatement(updateStockSql)) {
                     updateStmt.setInt(1, quantity);
                     updateStmt.setInt(2, quantity);
                     updateStmt.setLong(3, stockId);
-                    updateStmt.executeUpdate();
+                    updatedRows = updateStmt.executeUpdate();
+                }
+
+                if (updatedRows == 0) {
+                    throw domain.exception.StockTransferException.concurrentModification(itemCode);
                 }
 
                 // Record transfer
                 try (PreparedStatement insertStmt = conn.prepareStatement(insertTransferSql)) {
-                    insertStmt.setString(1, itemCode);
+                    insertStmt.setString(1, itemCode.trim());
                     insertStmt.setLong(2, stockId);
                     insertStmt.setInt(3, quantity);
                     insertStmt.setLong(4, managerId);
-                    insertStmt.setString(5, notes);
+                    insertStmt.setString(5, notes != null ? notes.trim() : null);
                     insertStmt.executeUpdate();
                 }
 
                 conn.commit();
 
+                // Log successful transfer
+                java.util.logging.Logger.getLogger(this.getClass().getName())
+                    .info(String.format("Stock transfer completed: %d units of %s from SHELF to WEB by manager %d",
+                         quantity, itemCode, managerId));
+
+            } catch (domain.exception.StockTransferException e) {
+                conn.rollback();
+                throw e; // Re-throw our custom exceptions
+            } catch (SQLException e) {
+                conn.rollback();
+                if (e.getMessage().contains("foreign key")) {
+                    throw domain.exception.StockTransferException.itemNotFound(itemCode);
+                } else if (e.getMessage().contains("duplicate")) {
+                    throw domain.exception.StockTransferException.concurrentModification(itemCode);
+                } else {
+                    throw new RuntimeException("Database error during stock transfer: " + e.getMessage(), e);
+                }
             } catch (Exception e) {
                 conn.rollback();
                 throw new RuntimeException("Stock transfer failed: " + e.getMessage(), e);
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException("Database error during stock transfer: " + e.getMessage(), e);
+            throw new RuntimeException("Database connection error during stock transfer: " + e.getMessage(), e);
         }
     }
 

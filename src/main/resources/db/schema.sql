@@ -284,3 +284,84 @@ ORDER BY st.transfer_date DESC;
 
 -- Test low stock alerts
 -- SELECT * FROM v_low_stock_items;
+
+-- ===============================
+-- DISCOUNT SYSTEM - FIFO-BASED
+-- ===============================
+
+-- Discounts Table (FIFO-based discount system)
+CREATE TABLE discounts (
+    discount_id INT PRIMARY KEY AUTO_INCREMENT,
+    discount_code VARCHAR(50) UNIQUE NOT NULL,
+    description VARCHAR(255) NOT NULL,
+    discount_type ENUM('PERCENTAGE', 'FIXED_AMOUNT') NOT NULL,
+    discount_value DECIMAL(10, 2) NOT NULL,
+    min_purchase_amount DECIMAL(10, 2) DEFAULT 0.00,
+    max_discount_amount DECIMAL(10, 2) NULL,
+    start_date DATETIME NOT NULL,
+    end_date DATETIME NOT NULL,
+    is_active BOOLEAN DEFAULT TRUE,
+    usage_limit INT DEFAULT NULL,
+    times_used INT DEFAULT 0,
+    created_by BIGINT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (created_by) REFERENCES users(user_id),
+    CHECK (discount_value > 0),
+    CHECK (min_purchase_amount >= 0),
+    CHECK (start_date < end_date),
+    CHECK (times_used >= 0)
+);
+
+-- Order Discounts Junction Table (track which discounts were applied to which orders)
+CREATE TABLE order_discounts (
+    order_discount_id INT PRIMARY KEY AUTO_INCREMENT,
+    order_id INT NOT NULL,
+    discount_id INT NOT NULL,
+    discount_amount DECIMAL(10, 2) NOT NULL,
+    applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE,
+    FOREIGN KEY (discount_id) REFERENCES discounts(discount_id) ON DELETE CASCADE
+);
+
+-- Add discount_amount column to orders table
+ALTER TABLE orders ADD COLUMN discount_amount DECIMAL(10, 2) DEFAULT 0.00;
+
+-- Index for faster FIFO queries (oldest active discounts first)
+CREATE INDEX idx_discounts_fifo ON discounts(start_date, is_active, end_date);
+CREATE INDEX idx_discounts_active ON discounts(is_active, start_date);
+CREATE INDEX idx_order_discounts_order ON order_discounts(order_id);
+
+-- Insert sample discounts for testing
+INSERT INTO discounts (discount_code, description, discount_type, discount_value, min_purchase_amount, max_discount_amount, start_date, end_date, created_by)
+VALUES
+    ('WELCOME10', '10% off for new customers', 'PERCENTAGE', 10.00, 50.00, 100.00, '2026-01-01 00:00:00', '2026-12-31 23:59:59', 1),
+    ('SAVE50', 'LKR 50 off on orders above LKR 200', 'FIXED_AMOUNT', 50.00, 200.00, NULL, '2026-01-15 00:00:00', '2026-03-31 23:59:59', 1),
+    ('BIGDEAL', '20% off on large orders', 'PERCENTAGE', 20.00, 500.00, 200.00, '2026-01-20 00:00:00', '2026-02-28 23:59:59', 1);
+
+-- View for active discounts with FIFO ordering
+CREATE VIEW v_active_discounts_fifo AS
+SELECT
+    discount_id,
+    discount_code,
+    description,
+    discount_type,
+    discount_value,
+    min_purchase_amount,
+    max_discount_amount,
+    start_date,
+    end_date,
+    usage_limit,
+    times_used,
+    (usage_limit - times_used) AS remaining_uses,
+    CASE
+        WHEN usage_limit IS NULL THEN 'Unlimited'
+        ELSE CONCAT(times_used, '/', usage_limit)
+    END AS usage_status
+FROM discounts
+WHERE is_active = TRUE
+  AND start_date <= NOW()
+  AND end_date >= NOW()
+  AND (usage_limit IS NULL OR times_used < usage_limit)
+ORDER BY start_date ASC;  -- FIFO: Oldest first
+

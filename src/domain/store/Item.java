@@ -6,11 +6,17 @@ public record Item(
         String code,
         String name,
         BigDecimal price,
-        boolean isActive
+        boolean isActive,
+        String category  // ✅ NEW: Item category for category-based discounts
 ) {
     // Convenience constructor for active items (backwards compatibility)
     public Item(String code, String name, BigDecimal price) {
-        this(code, name, price, true);
+        this(code, name, price, true, null);
+    }
+
+    // Constructor with category
+    public Item(String code, String name, BigDecimal price, String category) {
+        this(code, name, price, true, category);
     }
 
     // Convenience method for backwards compatibility

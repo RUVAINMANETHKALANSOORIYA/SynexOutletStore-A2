@@ -33,22 +33,22 @@ class CheckoutServiceImplExtendedTest {
     @DisplayName("Online order validation")
     void testOnlineOrderValidation() {
         Cart cart = new Cart();
-        assertThrows(IllegalArgumentException.class, () -> service.placeOnlineOrder(1, null, PaymentMethod.CARD));
-        assertThrows(IllegalArgumentException.class, () -> service.placeOnlineOrder(1, cart, PaymentMethod.CARD));
+        assertThrows(domain.exception.CheckoutFailedException.class, () -> service.placeOnlineOrder(1, null, PaymentMethod.CARD));
+        assertThrows(domain.exception.CheckoutFailedException.class, () -> service.placeOnlineOrder(1, cart, PaymentMethod.CARD));
         
         cart.add("I1", "N1", 10, 1);
-        assertThrows(IllegalArgumentException.class, () -> service.placeOnlineOrder(1, cart, null));
+        assertThrows(domain.exception.CheckoutFailedException.class, () -> service.placeOnlineOrder(1, cart, null));
     }
 
     @Test
     @DisplayName("POS order validation")
     void testPosOrderValidation() {
         Cart cart = new Cart();
-        assertThrows(IllegalArgumentException.class, () -> service.placePosOrder(1, null, PaymentMethod.CASH));
-        assertThrows(IllegalArgumentException.class, () -> service.placePosOrder(1, cart, PaymentMethod.CASH));
+        assertThrows(domain.exception.CheckoutFailedException.class, () -> service.placePosOrder(1, null, PaymentMethod.CASH));
+        assertThrows(domain.exception.CheckoutFailedException.class, () -> service.placePosOrder(1, cart, PaymentMethod.CASH));
         
         cart.add("I1", "N1", 10, 1);
-        assertThrows(IllegalArgumentException.class, () -> service.placePosOrder(1, cart, null));
+        assertThrows(domain.exception.CheckoutFailedException.class, () -> service.placePosOrder(1, cart, null));
     }
 
     @Test

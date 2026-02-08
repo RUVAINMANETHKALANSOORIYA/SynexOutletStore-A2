@@ -21,6 +21,9 @@ class CartServletsTest {
         params = new HashMap<>();
         sessionAttrs = new HashMap<>();
         redirect = new StringBuilder();
+        try {
+            Class.forName("fakes.JdbcFakes$FakeDriver");
+        } catch (Exception e) {}
     }
 
     @Test
@@ -92,18 +95,19 @@ class CartServletsTest {
         assertNotNull(sessionAttrs.get("cart"));
     }
     @Test void cartSrv08() throws Exception { 
-        sessionAttrs.put("staffUserId", 1L);
+        sessionAttrs.put("staffUserId", 1L); params.put("itemCode", "I1");
         new PosCartAddServlet().doPost(ServletFakes.createMockRequest(params, sessionAttrs), ServletFakes.createMockResponse(redirect));
-        assertNotNull(sessionAttrs.get("cart"));
+        assertNotNull(sessionAttrs.get("posCart"));
     }
     @Test void cartSrv09() throws Exception { 
         sessionAttrs.put("staffUserId", 1L); params.put("itemCode", "I1"); params.put("qty", "10");
         new PosCartAddServlet().doPost(ServletFakes.createMockRequest(params, sessionAttrs), ServletFakes.createMockResponse(redirect));
-        assertEquals(10, ((Cart)sessionAttrs.get("cart")).items().get("I1"));
+        assertEquals(10, ((Cart)sessionAttrs.get("posCart")).items().get("I1"));
     }
     @Test void cartSrv10() throws Exception { 
         sessionAttrs.put("customerId", 1L); params.put("itemCode", "I1"); params.put("qty", "10");
         new CartAddServlet().doPost(ServletFakes.createMockRequest(params, sessionAttrs), ServletFakes.createMockResponse(redirect));
+        sessionAttrs.remove("lastAddedTime");
         new CartAddServlet().doPost(ServletFakes.createMockRequest(params, sessionAttrs), ServletFakes.createMockResponse(redirect));
         assertEquals(20, ((Cart)sessionAttrs.get("cart")).items().get("I1"));
     }
@@ -125,36 +129,37 @@ class CartServletsTest {
     @Test void cartSrv18() throws Exception { 
         sessionAttrs.put("staffUserId", 1L); params.put("itemCode", "I1"); params.put("qty", "1");
         new PosCartAddServlet().doPost(ServletFakes.createMockRequest(params, sessionAttrs), ServletFakes.createMockResponse(redirect));
-        assertTrue(redirect.toString().contains("/cart/view"));
+        assertTrue(redirect.toString().contains("/pos/home"));
     }
     @Test void cartSrv19() throws Exception { 
         sessionAttrs.put("customerId", 1L); params.put("itemCode", "I1"); params.put("qty", "-1");
         new CartAddServlet().doPost(ServletFakes.createMockRequest(params, sessionAttrs), ServletFakes.createMockResponse(redirect));
-        assertNull(((Cart)sessionAttrs.get("cart")).items().get("I1"));
+        assertTrue(sessionAttrs.get("cart") == null || !((Cart)sessionAttrs.get("cart")).items().containsKey("I1"));
     }
     @Test void cartSrv20() throws Exception { 
         sessionAttrs.put("customerId", 1L); params.put("itemCode", "I1"); params.put("qty", "0");
         new CartAddServlet().doPost(ServletFakes.createMockRequest(params, sessionAttrs), ServletFakes.createMockResponse(redirect));
-        assertNull(((Cart)sessionAttrs.get("cart")).items().get("I1"));
+        assertTrue(sessionAttrs.get("cart") == null || !((Cart)sessionAttrs.get("cart")).items().containsKey("I1"));
     }
     @Test void cartSrv21() throws Exception { 
         sessionAttrs.put("customerId", 1L); params.put("itemCode", " ");
         new CartAddServlet().doPost(ServletFakes.createMockRequest(params, sessionAttrs), ServletFakes.createMockResponse(redirect));
-        assertNotNull(sessionAttrs.get("cart"));
+        assertTrue(redirect.toString().contains("error=cart_error"));
     }
     @Test void cartSrv22() throws Exception { 
         sessionAttrs.put("customerId", 1L); params.put("itemCode", null);
         new CartAddServlet().doPost(ServletFakes.createMockRequest(params, sessionAttrs), ServletFakes.createMockResponse(redirect));
-        assertNotNull(sessionAttrs.get("cart"));
+        assertTrue(redirect.toString().contains("error=cart_error"));
     }
     @Test void cartSrv23() throws Exception { 
         sessionAttrs.put("customerId", 1L); params.put("qty", "10");
         new CartAddServlet().doPost(ServletFakes.createMockRequest(params, sessionAttrs), ServletFakes.createMockResponse(redirect));
-        assertNotNull(sessionAttrs.get("cart"));
+        assertTrue(redirect.toString().contains("error=cart_error"));
     }
     @Test void cartSrv24() throws Exception { 
         sessionAttrs.put("customerId", 1L); params.put("itemCode", "I1"); params.put("qty", "10");
         new CartAddServlet().doPost(ServletFakes.createMockRequest(params, sessionAttrs), ServletFakes.createMockResponse(redirect));
+        sessionAttrs.remove("lastAddedTime");
         params.put("qty", "20");
         new CartAddServlet().doPost(ServletFakes.createMockRequest(params, sessionAttrs), ServletFakes.createMockResponse(redirect));
         assertEquals(30, ((Cart)sessionAttrs.get("cart")).items().get("I1"));
@@ -164,7 +169,7 @@ class CartServletsTest {
         new PosCartAddServlet().doPost(ServletFakes.createMockRequest(params, sessionAttrs), ServletFakes.createMockResponse(redirect));
         params.put("qty", "5");
         new PosCartAddServlet().doPost(ServletFakes.createMockRequest(params, sessionAttrs), ServletFakes.createMockResponse(redirect));
-        assertEquals(15, ((Cart)sessionAttrs.get("cart")).items().get("I1"));
+        assertEquals(15, ((Cart)sessionAttrs.get("posCart")).items().get("I1"));
     }
     @Test void cartSrv26() throws Exception { 
         sessionAttrs.put("customerId", 1L); params.put("itemCode", "I1");
@@ -189,7 +194,7 @@ class CartServletsTest {
         assertNotNull(sessionAttrs.get("cart"));
     }
     @Test void cartSrv30() throws Exception { 
-        sessionAttrs.put("customerId", 1L);
+        sessionAttrs.put("customerId", 1L); params.put("itemCode", "I1"); params.put("qty", "10");
         new CartAddServlet().doPost(ServletFakes.createMockRequest(params, sessionAttrs), ServletFakes.createMockResponse(redirect));
         assertNotNull(sessionAttrs.get("cart"));
     }

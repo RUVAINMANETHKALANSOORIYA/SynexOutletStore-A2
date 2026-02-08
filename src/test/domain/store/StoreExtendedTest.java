@@ -11,13 +11,14 @@ class StoreExtendedTest {
     @Test
     @DisplayName("Item record tests")
     void testItem() {
-        Item item = new Item("I001", "Milk", new BigDecimal("450.00"), true);
+        Item item = new Item("I001", "Milk", new BigDecimal("450.00"), true, "Dairy");
         assertEquals("I001", item.code());
         assertEquals("I001", item.itemCode());
         assertEquals("Milk", item.name());
         assertEquals(new BigDecimal("450.00"), item.price());
         assertTrue(item.isActive());
-        
+        assertEquals("Dairy", item.category());
+
         Item item2 = new Item("I002", "Bread", new BigDecimal("100.00"));
         assertTrue(item2.isActive());
     }
@@ -54,15 +55,15 @@ class StoreExtendedTest {
     @Test void store01() { assertNotNull(new Item("A", "B", BigDecimal.ONE)); }
     @Test void store02() { assertEquals("A", new Item("A", "B", BigDecimal.ONE).itemCode()); }
     @Test void store03() { assertTrue(new Item("A", "B", BigDecimal.ONE).isActive()); }
-    @Test void store04() { assertFalse(new Item("A", "B", BigDecimal.ONE, false).isActive()); }
+    @Test void store04() { assertFalse(new Item("A", "B", BigDecimal.ONE, false, null).isActive()); }
     @Test void store05() { Cart c = new Cart(); c.add("A", 1); assertEquals(1, c.items().get("A")); }
     @Test void store06() { Cart c = new Cart(); c.add("A", 1); c.remove("A"); assertTrue(c.isEmpty()); }
     @Test void store07() { Cart c = new Cart(); c.add("A", 1); c.clear(); assertTrue(c.isEmpty()); }
     @Test void store08() { Cart c = new Cart(); c.setQty("A", 5); assertEquals(5, c.items().get("A")); }
     @Test void store09() { Cart c = new Cart(); c.setQty("A", 5); c.setQty("A", 0); assertTrue(c.isEmpty()); }
-    @Test void store10() { Cart c = new Cart(); c.setQty("A", -1); assertTrue(c.isEmpty()); }
+    @Test void store10() { Cart c = new Cart(); assertThrows(domain.exception.InvalidCartOperationException.class, () -> c.setQty("A", -1)); }
     @Test void store11() { Cart c = new Cart(); c.add("A", 0); assertTrue(c.isEmpty()); }
-    @Test void store12() { Cart c = new Cart(); c.add("A", -1); assertTrue(c.isEmpty()); }
+    @Test void store12() { Cart c = new Cart(); assertThrows(domain.exception.InvalidCartOperationException.class, () -> c.add("A", -1)); }
     @Test void store13() { CartItem i = new CartItem("A", "N", BigDecimal.TEN, 2); assertEquals(new BigDecimal("20"), i.lineTotal()); }
     @Test void store14() { CartItem i = new CartItem("A", "N", BigDecimal.TEN, 0); assertEquals(BigDecimal.ZERO, i.lineTotal().stripTrailingZeros()); }
     @Test void store15() { Cart c = new Cart(); c.add("A", 1); c.add("B", 2); assertEquals(3, c.totalItems()); }
@@ -70,9 +71,9 @@ class StoreExtendedTest {
     @Test void store17() { Cart c = new Cart(); c.add("A", 2); BigDecimal t = c.total(code -> BigDecimal.TEN); assertEquals(new BigDecimal("20"), t); }
     @Test void store18() { Cart c = new Cart(); BigDecimal t = c.total(code -> BigDecimal.TEN); assertEquals(BigDecimal.ZERO, t); }
     @Test void store19() { Cart c = new Cart(); c.add("A", 1); BigDecimal t = c.total(code -> null); assertEquals(BigDecimal.ZERO, t); }
-    @Test void store20() { Item i = new Item("C", "N", BigDecimal.ONE, true); assertEquals("C", i.code()); }
-    @Test void store21() { Item i = new Item("C", "N", BigDecimal.ONE, true); assertEquals("N", i.name()); }
-    @Test void store22() { Item i = new Item("C", "N", BigDecimal.ONE, true); assertEquals(BigDecimal.ONE, i.price()); }
+    @Test void store20() { Item i = new Item("C", "N", BigDecimal.ONE, true, null); assertEquals("C", i.code()); }
+    @Test void store21() { Item i = new Item("C", "N", BigDecimal.ONE, true, null); assertEquals("N", i.name()); }
+    @Test void store22() { Item i = new Item("C", "N", BigDecimal.ONE, true, null); assertEquals(BigDecimal.ONE, i.price()); }
     @Test void store23() { CartItem i = new CartItem("C", "N", BigDecimal.ONE, 1); assertEquals("C", i.itemCode()); }
     @Test void store24() { CartItem i = new CartItem("C", "N", BigDecimal.ONE, 1); assertEquals("N", i.name()); }
     @Test void store25() { CartItem i = new CartItem("C", "N", BigDecimal.ONE, 1); assertEquals(BigDecimal.ONE, i.unitPrice()); }
@@ -95,16 +96,16 @@ class StoreExtendedTest {
     @Test void store42() { Cart c = new Cart(); c.add("A", 1); c.add("B", 1); c.clear(); assertTrue(c.isEmpty()); }
     @Test void store43() { Cart c = new Cart(); c.setQty("A", 100); assertEquals(100, c.items().get("A")); }
     @Test void store44() { Cart c = new Cart(); c.setQty("A", 100); c.remove("A"); assertNull(c.items().get("A")); }
-    @Test void store45() { Cart c = new Cart(); c.add("A", 10); c.add("A", -5); assertEquals(10, c.items().get("A")); }
+    @Test void store45() { Cart c = new Cart(); c.add("A", 10); assertThrows(domain.exception.InvalidCartOperationException.class, () -> c.add("A", -5)); }
     @Test void store46() { Cart c = new Cart(); c.add("A", 10); c.add("A", 0); assertEquals(10, c.items().get("A")); }
-    @Test void store47() { Cart c = new Cart(); c.add("A", 1); c.setQty("A", -1); assertTrue(c.isEmpty()); }
+    @Test void store47() { Cart c = new Cart(); c.add("A", 1); assertThrows(domain.exception.InvalidCartOperationException.class, () -> c.setQty("A", -1)); }
     @Test void store48() { Cart c = new Cart(); c.add("A", 1); c.setQty("A", 0); assertTrue(c.isEmpty()); }
     @Test void store49() { Cart c = new Cart(); c.add("A", 5); assertEquals(5, c.totalItems()); }
     @Test void store50() { Cart c = new Cart(); c.add("A", 5); c.add("B", 10); assertEquals(15, c.totalItems()); }
     @Test void store51() { assertNotNull(new Item("A", "B", BigDecimal.ZERO)); }
     @Test void store52() { assertNotNull(new CartItem("A", "B", BigDecimal.ZERO, 0)); }
-    @Test void store53() { Item i = new Item("A", "B", BigDecimal.ONE, true); assertTrue(i.isActive()); }
-    @Test void store54() { Item i = new Item("A", "B", BigDecimal.ONE, false); assertFalse(i.isActive()); }
+    @Test void store53() { Item i = new Item("A", "B", BigDecimal.ONE, true, null); assertTrue(i.isActive()); }
+    @Test void store54() { Item i = new Item("A", "B", BigDecimal.ONE, false, null); assertFalse(i.isActive()); }
     @Test void store55() { CartItem i = new CartItem("A", "B", new BigDecimal("1.5"), 4); assertEquals(new BigDecimal("6.0"), i.lineTotal()); }
     @Test void store56() { Cart c = new Cart(); c.add("A", 1); assertEquals(1, c.items().get("A")); }
     @Test void store57() { Cart c = new Cart(); c.add("B", 2); assertEquals(2, c.items().get("B")); }

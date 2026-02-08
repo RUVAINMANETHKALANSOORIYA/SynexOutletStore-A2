@@ -32,7 +32,7 @@ class StoreCartTest {
         assertTrue(cart.isEmpty());
         
         cart.add("ITM001", 5);
-        cart.add("ITM001", -5); // Does nothing in code
+        assertThrows(domain.exception.InvalidCartOperationException.class, () -> cart.add("ITM001", -5));
         assertFalse(cart.isEmpty());
         assertEquals(5, cart.items().get("ITM001"));
         

@@ -11,13 +11,14 @@ class ItemTest {
     @DisplayName("Should create Item and retrieve properties")
     void testItem() {
         BigDecimal price = new BigDecimal("450.00");
-        Item item = new Item("ITM001", "Milk", price, true);
-        
+        Item item = new Item("ITM001", "Milk", price, true, "Dairy");
+
         assertEquals("ITM001", item.code());
         assertEquals("ITM001", item.itemCode());
         assertEquals("Milk", item.name());
         assertEquals(price, item.price());
         assertTrue(item.isActive());
+        assertEquals("Dairy", item.category());
     }
 
     @Test
