@@ -17,13 +17,11 @@ public class Cart {
         }
     }
 
-    // ✅ NEW: Add item with discount
     public void addWithDiscount(String code, String name, double unitPrice, int qty,
                                BigDecimal discountAmount, String discountCode) {
         items.put(code, new CartItem(code, name, unitPrice, qty, discountAmount, discountCode));
     }
 
-    // ✅ NEW: Apply discount to specific item
     public void applyDiscountToItem(String itemCode, BigDecimal discountAmount, String discountCode) {
         CartItem existing = items.get(itemCode);
         if (existing != null) {

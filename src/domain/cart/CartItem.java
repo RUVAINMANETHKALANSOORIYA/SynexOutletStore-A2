@@ -14,13 +14,11 @@ public record CartItem(String itemCode, String name, double unitPrice, int qty,
         return unitPrice * qty;
     }
 
-    // ✅ NEW: Calculate discounted line total
     public BigDecimal discountedLineTotal() {
         BigDecimal originalTotal = new BigDecimal(unitPrice).multiply(new BigDecimal(qty));
         return originalTotal.subtract(discountAmount != null ? discountAmount : BigDecimal.ZERO);
     }
 
-    // ✅ NEW: Get discount per unit
     public BigDecimal discountPerUnit() {
         if (discountAmount == null || qty == 0) {
             return BigDecimal.ZERO;
