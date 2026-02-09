@@ -27,7 +27,6 @@ public class CheckoutServlet extends HttpServlet {
             return;
         }
 
-        // ✅ FIX 1: get customerId from session
         Long customerId = (Long) session.getAttribute("customerId");
         if (customerId == null) {
             resp.sendRedirect(req.getContextPath() + "/customer-login.html");
@@ -41,7 +40,6 @@ public class CheckoutServlet extends HttpServlet {
             return;
         }
 
-        // ✅ Validate payment method parameter
         String paymentMethodParam = req.getParameter("paymentMethod");
         if (paymentMethodParam == null || paymentMethodParam.trim().isEmpty()) {
             resp.sendRedirect(req.getContextPath() + "/checkout.html?error=no_payment_method");
@@ -71,7 +69,6 @@ public class CheckoutServlet extends HttpServlet {
             }
         }
 
-        // ✅ NEW: Apply item-specific discounts (also supports discount codes)
         var discountService = new application.DiscountServiceImpl(new infrastructure.jdbc.JdbcDiscountRepository());
 
         // Check if discount code was entered
@@ -110,7 +107,6 @@ public class CheckoutServlet extends HttpServlet {
             // Use the discounted cart for checkout
             long orderId = checkout.placeOnlineOrder(customerId, discountedCart, pm);
 
-            // ✅ Record item-specific discount usage
             if (finalTotalDiscountAmount.compareTo(java.math.BigDecimal.ZERO) > 0) {
                 try {
                     var discountRepo = new infrastructure.jdbc.JdbcDiscountRepository();
@@ -326,7 +322,6 @@ public class CheckoutServlet extends HttpServlet {
         return total;
     }
 
-    // ✅ NEW: Helper method to apply discount code to cart
     private domain.cart.Cart applyDiscountCode(domain.cart.Cart originalCart, String discountCode,
                                               application.DiscountServiceImpl discountService,
                                               infrastructure.jdbc.JdbcItemRepository itemRepo) {

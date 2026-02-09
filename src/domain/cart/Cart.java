@@ -40,7 +40,6 @@ public class Cart {
         return t;
     }
 
-    // ✅ NEW: Calculate total with discounts applied
     public BigDecimal discountedTotal() {
         BigDecimal total = BigDecimal.ZERO;
         for (CartItem item : items.values()) {
@@ -49,7 +48,6 @@ public class Cart {
         return total;
     }
 
-    // ✅ NEW: Get total discount amount
     public BigDecimal totalDiscountAmount() {
         BigDecimal totalDiscount = BigDecimal.ZERO;
         for (CartItem item : items.values()) {

@@ -249,7 +249,7 @@ public class DiscountServiceImpl implements DiscountService {
         return "invalid";
     }
 
-    // ✅ NEW: Apply item-specific discounts to cart
+
     public domain.cart.Cart applyItemDiscountsToCart(domain.cart.Cart cart,
                                                      infrastructure.jdbc.JdbcItemRepository itemRepository) {
         List<Discount> activeDiscounts = getActiveDiscounts();
@@ -291,7 +291,6 @@ public class DiscountServiceImpl implements DiscountService {
         return discountedCart;
     }
 
-    // ✅ NEW: Get available item discounts for display
     public List<ItemDiscountInfo> getAvailableItemDiscounts(domain.cart.Cart cart,
                                                            infrastructure.jdbc.JdbcItemRepository itemRepository) {
         List<Discount> activeDiscounts = getActiveDiscounts();
@@ -318,7 +317,6 @@ public class DiscountServiceImpl implements DiscountService {
         return availableDiscounts;
     }
 
-    // ✅ NEW: Validate discount code and return discount if valid
     public Optional<Discount> validateDiscountCode(String discountCode) {
         var discountOpt = discountRepository.findByCode(discountCode);
         if (discountOpt.isPresent() && discountOpt.get().isValid()) {
@@ -327,7 +325,6 @@ public class DiscountServiceImpl implements DiscountService {
         return Optional.empty();
     }
 
-    // ✅ NEW: Record class for item discount information
     public record ItemDiscountInfo(
         String itemCode,
         String itemName,

@@ -2,57 +2,141 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Customer Register</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Customer Register - SYOS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/glass-morphism.css">
+    <style>
+        .register-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .brand-logo {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .floating-shapes {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .shape {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 15s ease-in-out infinite;
+        }
+
+        .shape:nth-child(1) { width: 100px; height: 100px; top: 15%; left: 10%; animation-delay: 0s; }
+        .shape:nth-child(2) { width: 130px; height: 130px; top: 70%; left: 80%; animation-delay: 4s; }
+        .shape:nth-child(3) { width: 70px; height: 70px; top: 85%; left: 20%; animation-delay: 8s; }
+        .shape:nth-child(4) { width: 90px; height: 90px; top: 20%; left: 85%; animation-delay: 12s; }
+    </style>
 </head>
-<body class="bg-gradient-to-br from-purple-50 to-pink-100 min-h-screen flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
-        <div class="text-center mb-8">
-            <h2 class="text-3xl font-bold text-gray-800 mb-2">Create Account</h2>
-            <p class="text-gray-600">Join us as an online customer</p>
+<body>
+    <!-- Floating Background Shapes -->
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <div class="register-container fade-in">
+        <div class="glass-form scale-in" style="width: 100%; max-width: 480px;">
+            <!-- Brand Header -->
+            <div class="text-center mb-4">
+                <div class="glass-icon" style="font-size: 2rem; margin: 0 auto 1rem; background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                    ✨
+                </div>
+                <h1 class="brand-logo">Join SYNEX</h1>
+                <p class="text-glass text-center" style="font-size: 0.9rem;">Create your shopping account</p>
+            </div>
+
+            <!-- Registration Form -->
+            <form id="registerForm" method="post">
+                <div class="text-center mb-3">
+                    <h2 class="text-glass" style="font-size: 1.5rem; font-weight: 600;">Create Account</h2>
+                    <p class="text-glass-muted" style="font-size: 0.9rem;">Join our exclusive shopping community</p>
+                </div>
+
+                <div class="glass-form-group">
+                    <label class="glass-label">👤 Full Name</label>
+                    <input type="text" name="fullName" required class="glass-input" placeholder="Enter your full name">
+                </div>
+
+                <div class="glass-form-group">
+                    <label class="glass-label">📧 Email Address</label>
+                    <input type="email" name="email" required class="glass-input" placeholder="Enter your email">
+                </div>
+
+                <div class="glass-form-group">
+                    <label class="glass-label">📱 Phone Number</label>
+                    <input type="text" name="phone" class="glass-input" placeholder="Enter your phone number">
+                </div>
+
+                <div class="glass-form-group">
+                    <label class="glass-label">🏷️ Username</label>
+                    <input type="text" name="username" required class="glass-input" placeholder="Choose a username">
+                </div>
+
+                <div class="glass-form-group">
+                    <label class="glass-label">🔐 Password</label>
+                    <input type="password" name="password" required class="glass-input" placeholder="Create a secure password">
+                </div>
+
+                <button type="submit" class="glass-btn glass-btn-secondary" style="width: 100%; justify-content: center; padding: 1rem;">
+                    <span>🚀 Create Account</span>
+                </button>
+            </form>
+
+            <!-- Login Link -->
+            <div style="text-align: center; margin: 1.5rem 0;">
+                <p class="text-glass-muted" style="font-size: 0.9rem;">
+                    Already have an account?
+                    <a href="customer-login.html" class="text-glass" style="text-decoration: none; font-weight: 600; border-bottom: 1px solid rgba(255,255,255,0.5);">
+                        Login here
+                    </a>
+                </p>
+            </div>
+
+            <!-- Divider -->
+            <div style="position: relative; margin: 2rem 0; text-align: center;">
+                <div style="height: 1px; background: rgba(255, 255, 255, 0.2);"></div>
+                <span style="position: absolute; top: -0.5rem; left: 50%; transform: translateX(-50%); background: var(--glass-bg); padding: 0 1rem; color: rgba(255, 255, 255, 0.7); font-size: 0.8rem;">OR</span>
+            </div>
+
+            <!-- Quick Actions -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <a href="staff-login.html" class="glass-btn glass-btn-primary" style="text-decoration: none; justify-content: center; font-size: 0.85rem;">
+                    <span>👔 Staff Login</span>
+                </a>
+                <a href="store-home.html" class="glass-btn glass-btn-success" style="text-decoration: none; justify-content: center; font-size: 0.85rem;">
+                    <span>🛍️ Browse Store</span>
+                </a>
+            </div>
+
+            <!-- Terms and Privacy -->
+            <div class="glass-alert glass-alert-success mt-3" style="font-size: 0.75rem;">
+                <span>📋</span>
+                <div>
+                    By creating an account, you agree to our Terms of Service and Privacy Policy. Your data is secure with us.
+                </div>
+            </div>
         </div>
-
-        <form id="registerForm" method="post" class="space-y-5">
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
-                <input type="text" name="fullName" required
-                       class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition duration-200 outline-none">
-            </div>
-
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                <input type="email" name="email" required
-                       class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition duration-200 outline-none">
-            </div>
-
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Phone</label>
-                <input type="text" name="phone"
-                       class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition duration-200 outline-none">
-            </div>
-
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Username</label>
-                <input type="text" name="username" required
-                       class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition duration-200 outline-none">
-            </div>
-
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
-                <input type="password" name="password" required
-                       class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition duration-200 outline-none">
-            </div>
-
-            <button type="submit"
-                    class="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold py-3 rounded-lg hover:from-purple-700 hover:to-pink-700 transform hover:scale-[1.02] transition duration-200 shadow-lg">
-                Create Account
-            </button>
-        </form>
-
-        <p class="text-center mt-6 text-gray-600">
-            Already have an account?
-            <a href="customer-login.html" class="text-purple-600 hover:text-purple-700 font-semibold hover:underline">Login</a>
-        </p>
     </div>
 
     <script>
@@ -61,6 +145,78 @@
 
         // Set form action dynamically
         document.getElementById('registerForm').action = contextPath + '/customer/register';
+
+        // Add loading state to register button
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span class="glass-loading"></span> <span>Creating account...</span>';
+            submitBtn.disabled = true;
+
+            // Re-enable after 5 seconds in case of no redirect
+            setTimeout(() => {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }, 5000);
+        });
+
+        // Add form validation
+        const form = document.getElementById('registerForm');
+        const inputs = form.querySelectorAll('input[required]');
+
+        inputs.forEach(input => {
+            input.addEventListener('blur', function() {
+                if (!this.value) {
+                    this.style.borderColor = 'rgba(250, 112, 154, 0.8)';
+                } else {
+                    this.style.borderColor = 'rgba(67, 233, 123, 0.8)';
+                }
+            });
+
+            input.addEventListener('input', function() {
+                this.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+            });
+        });
+
+        // Real-time form validation
+        const passwordField = document.querySelector('input[name="password"]');
+        const usernameField = document.querySelector('input[name="username"]');
+
+        passwordField.addEventListener('input', function() {
+            const strength = getPasswordStrength(this.value);
+            showPasswordStrength(strength);
+        });
+
+        function getPasswordStrength(password) {
+            let strength = 0;
+            if (password.length >= 8) strength++;
+            if (/[A-Z]/.test(password)) strength++;
+            if (/[0-9]/.test(password)) strength++;
+            if (/[^A-Za-z0-9]/.test(password)) strength++;
+            return strength;
+        }
+
+        function showPasswordStrength(strength) {
+            const colors = ['#fa709a', '#fee140', '#43e97b', '#4facfe'];
+            const labels = ['Weak', 'Fair', 'Good', 'Strong'];
+            const field = document.querySelector('input[name="password"]');
+
+            if (field.value) {
+                field.style.borderColor = colors[strength] || colors[0];
+            }
+        }
+
+        // Add smooth focus transitions
+        const allInputs = document.querySelectorAll('.glass-input');
+        allInputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.style.transform = 'scale(1.02)';
+            });
+
+            input.addEventListener('blur', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
     </script>
 </body>
 </html>

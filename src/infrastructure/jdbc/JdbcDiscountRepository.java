@@ -49,7 +49,6 @@ public class JdbcDiscountRepository implements DiscountRepository {
 
             stmt.setLong(11, discount.createdBy());
 
-            // ✅ NEW: Set item_code and category
             if (discount.itemCode() != null) {
                 stmt.setString(12, discount.itemCode());
             } else {
@@ -402,8 +401,8 @@ public class JdbcDiscountRepository implements DiscountRepository {
             rs.getLong("created_by"),
             rs.getTimestamp("created_at").toLocalDateTime(),
             rs.getTimestamp("updated_at").toLocalDateTime(),
-            rs.getString("item_code"),    // ✅ NEW
-            rs.getString("category")      // ✅ NEW
+            rs.getString("item_code"),    //  NEW
+            rs.getString("category")      //  NEW
         );
     }
 }

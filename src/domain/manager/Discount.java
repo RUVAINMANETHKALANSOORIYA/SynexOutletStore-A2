@@ -90,7 +90,6 @@ public record Discount(
         return timesUsed + "/" + usageLimit;
     }
 
-    // ✅ NEW: Check if discount applies to specific item
     public boolean appliesTo(String itemCode, String itemCategory) {
         // If both itemCode and category are null, it's an order-level discount
         if (this.itemCode == null && this.category == null) {

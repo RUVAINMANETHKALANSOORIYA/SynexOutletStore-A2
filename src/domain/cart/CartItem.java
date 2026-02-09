@@ -26,12 +26,10 @@ public record CartItem(String itemCode, String name, double unitPrice, int qty,
         return discountAmount.divide(new BigDecimal(qty), 2, java.math.RoundingMode.HALF_UP);
     }
 
-    // ✅ NEW: Get discounted unit price
     public BigDecimal discountedUnitPrice() {
         return new BigDecimal(unitPrice).subtract(discountPerUnit());
     }
 
-    // ✅ NEW: Check if item has discount
     public boolean hasDiscount() {
         return discountAmount != null && discountAmount.compareTo(BigDecimal.ZERO) > 0;
     }

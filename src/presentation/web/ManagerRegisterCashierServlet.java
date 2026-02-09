@@ -13,7 +13,6 @@ public class ManagerRegisterCashierServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        // ✅ Authorization: only MANAGER can do this
         HttpSession session = req.getSession(false);
         if (session == null) {
             resp.sendRedirect(req.getContextPath() + "/staff-login.html?error=login");

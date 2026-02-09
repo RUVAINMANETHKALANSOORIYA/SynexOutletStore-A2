@@ -7,7 +7,7 @@ public record Item(
         String name,
         BigDecimal price,
         boolean isActive,
-        String category  // ✅ NEW: Item category for category-based discounts
+        String category  //
 ) {
     // Convenience constructor for active items (backwards compatibility)
     public Item(String code, String name, BigDecimal price) {
